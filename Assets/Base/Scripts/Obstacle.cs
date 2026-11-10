@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 public class Obstacle : MonoBehaviour
 {
+    static readonly List<Obstacle> Alive = new List<Obstacle>();
+
     [SerializeField] Transform anchor;
     [SerializeField] Animator animator;
     [SerializeField] Color hitColor = new Color(1f, 0.75f, 0.15f, 1f);
@@ -11,6 +14,7 @@ public class Obstacle : MonoBehaviour
     float _baseY;
     float _phase;
     Transform ScaleTarget => anchor != null ? anchor : transform.root;
+    public static List<Obstacle> Active => Alive;
 
     void Awake()
     {
@@ -25,6 +29,16 @@ public class Obstacle : MonoBehaviour
 
         _baseY = transform.localPosition.y;
         _phase = Random.Range(0f, Mathf.PI * 2f);
+    }
+
+    void OnEnable()
+    {
+        Alive.Add(this);
+    }
+
+    void OnDisable()
+    {
+        Alive.Remove(this);
     }
 
     void Update()

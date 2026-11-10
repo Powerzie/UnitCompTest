@@ -62,7 +62,7 @@ public static class GameFx
         renderer.renderMode = ParticleSystemRenderMode.Mesh;
         renderer.mesh = SphereMesh();
         renderer.sharedMaterial = MeshMat();
-        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         FadeOut(ps);
         ps.Play();
         Dust(position, size);
@@ -143,7 +143,7 @@ public static class GameFx
 
     public static void EnsureRim()
     {
-        if (_rim)
+        if (_rim || Application.isMobilePlatform)
             return;
 
         _rim = true;

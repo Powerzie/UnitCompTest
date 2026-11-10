@@ -162,8 +162,7 @@ public class MainBehaviour : MonoBehaviour
         Vector3 from = ScaleTarget.position;
         Vector3 to = Target.transform.position;
         float pathRadius = MainRadius();
-        Obstacle[] obstacles = FindObjectsByType<Obstacle>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        foreach (Obstacle obstacle in obstacles)
+        foreach (Obstacle obstacle in Obstacle.Active)
         {
             if (obstacle.OverlapsPath(from, to, pathRadius))
                 return false;

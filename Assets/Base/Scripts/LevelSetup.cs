@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 [DefaultExecutionOrder(-100)]
 public class LevelSetup : MonoBehaviour
 {
     void Awake()
     {
+        ApplyMobileQuality();
         float scale = LevelProgress.Scale;
         float areaScale = LevelProgress.AreaScale;
 
@@ -70,6 +72,25 @@ public class LevelSetup : MonoBehaviour
         Vector3 position = rig.localPosition;
         position.z = z;
         rig.localPosition = position;
+    }
+
+    static void ApplyMobileQuality()
+    {
+        if (!Application.isMobilePlatform)
+            return;
+
+        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+        Camera camera = Camera.main;
+        if (camera == null)
+            return;
+
+        camera.allowHDR = false;
+        if (camera.TryGetComponent(out UniversalAdditionalCameraData data))
+        {
+            data.antialiasing = AntialiasingMode.None;
+            data.antialiasingQuality = AntialiasingQuality.Low;
+        }
     }
 }
 
