@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 4075711705261672648}
   - component: {fileID: 5373912669754371085}
   - component: {fileID: 1213234824358747199}
+  - component: {fileID: 1213234824358747200}
   m_Layer: 0
   m_Name: ProjectileClone
   m_TagString: Untagged
@@ -102,6 +103,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: b22c3d4e5f67890a1b2c3d4e5f607182, type: 2}
+  - {fileID: 2100000, guid: e335f626e02673948a7511db9e821f11, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -186,7 +188,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileClone
   anchor: {fileID: 300001}
+  animator: {fileID: 1213234824358747200}
   lifetime: 10
-  hitRadiusMultiplier: 1.1
-  popBounce: 1.45
-  popDuration: 0.22
+--- !u!95 &1213234824358747200
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6650420959048476153}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a7c91e2f4b6d48c09e1a2b3c4d5e6f70, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

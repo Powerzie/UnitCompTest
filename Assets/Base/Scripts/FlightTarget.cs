@@ -3,8 +3,19 @@ using UnityEngine;
 public class FlightTarget : MonoBehaviour
 {
     [SerializeField] float clearRadius = 2f;
+    [SerializeField] Vector3 spawnOffset;
 
     public float ClearRadius => Mathf.Max(0f, clearRadius);
+    public Vector3 SpawnOffset => spawnOffset;
+
+    public void ApplyGrowth(float scale)
+    {
+        if (scale <= 1f)
+            return;
+
+        transform.localScale *= scale;
+        clearRadius *= scale;
+    }
 
     public bool Blocks(Vector3 world, float obstacleRadius)
     {

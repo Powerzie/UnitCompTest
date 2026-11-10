@@ -1,16 +1,25 @@
-using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class ProjectileClone : MonoBehaviour
 {
     [SerializeField] Transform anchor;
+    [SerializeField] Animator animator;
     [SerializeField] float lifetime = 10f;
-    [SerializeField] float hitRadiusMultiplier = 2f;
-    [SerializeField] float popBounce = 1.45f;
-    [SerializeField] float popDuration = 0.22f;
 
     Transform ScaleTarget => anchor != null ? anchor : transform.root;
+    float _hitRadius = 1f;
     bool _popping;
+
+    public static float Blend(float value, float small, float big, float from, float to)
+    {
+        return Mathf.Lerp(small, big, Mathf.InverseLerp(from, to, value));
+    }
+
+    public static float HoldRadius(float hold, float radius, float interval, float step, float max, float onHold)
+    {
+        return radius * Mathf.Min(max, onHold * Mathf.Pow(step, hold / Mathf.Max(0.0001f, interval)));
+    }
 
     public static Vector3 Velocity(Vector3 direction, float shotScale, float speed, float smallSpeed, float bigSpeed)
     {
@@ -18,9 +27,7 @@ public class ProjectileClone : MonoBehaviour
         if (flat.sqrMagnitude < 0.0001f)
             flat = Vector3.forward;
 
-        float size = Mathf.InverseLerp(0.15f, 1f, shotScale);
-        float speedFactor = Mathf.Lerp(smallSpeed, bigSpeed, size);
-        return flat.normalized * (speed * speedFactor);
+        return flat.normalized * (speed * Blend(shotScale, smallSpeed, bigSpeed, 0.15f, 1f));
     }
 
     public void ApplyScale(float scale)
@@ -28,8 +35,12 @@ public class ProjectileClone : MonoBehaviour
         ScaleTarget.localScale = Vector3.one * Mathf.Max(0.01f, scale);
     }
 
-    public void Launch(Vector3 velocity, Collider ignore)
+    public void Launch(Vector3 velocity, Collider ignore, float hitRadius)
     {
+        _hitRadius = hitRadius;
+        if (animator == null)
+            animator = GetComponent<Animator>();
+
         if (ignore != null && TryGetComponent(out Collider collider))
             Physics.IgnoreCollision(collider, ignore);
 
@@ -41,15 +52,25 @@ public class ProjectileClone : MonoBehaviour
         body.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
         body.WakeUp();
         body.linearVelocity = velocity;
+        GameFx.AttachTrail(transform, ScaleTarget.lossyScale.x);
         Destroy(transform.root.gameObject, lifetime);
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (_popping || collision.collider.GetComponentInParent<Obstacle>() == null)
+        if (_popping)
             return;
 
-        float radius = ScaleTarget.lossyScale.x * hitRadiusMultiplier;
+        if (collision.collider.GetComponentInParent<FlightTarget>() != null)
+        {
+            Pop();
+            return;
+        }
+
+        if (collision.collider.GetComponentInParent<Obstacle>() == null)
+            return;
+
+        float radius = ScaleTarget.lossyScale.x * 0.5f * _hitRadius;
         Collider[] hits = Physics.OverlapSphere(transform.position, radius, ~0, QueryTriggerInteraction.Ignore);
         foreach (Collider hit in hits)
         {
@@ -77,32 +98,24 @@ public class ProjectileClone : MonoBehaviour
         if (TryGetComponent(out Collider collider))
             collider.enabled = false;
 
-        StartCoroutine(PopRoutine());
+        CancelInvoke();
+        TrailRenderer trail = GetComponentInChildren<TrailRenderer>();
+        if (trail != null)
+            trail.time = 0.1f;
+        if (animator == null)
+            animator = GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.speed = 1f;
+            animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+            animator.Play("Pop", 0, 0f);
+        }
+        else
+            PopFinished();
     }
 
-    IEnumerator PopRoutine()
+    public void PopFinished()
     {
-        Vector3 start = transform.localScale;
-        Vector3 top = start * popBounce;
-        float growTime = popDuration * 0.35f;
-        float shrinkTime = Mathf.Max(0.01f, popDuration - growTime);
-        float time = 0f;
-
-        while (time < growTime)
-        {
-            time += Time.deltaTime;
-            transform.localScale = Vector3.Lerp(start, top, Mathf.Clamp01(time / growTime));
-            yield return null;
-        }
-
-        time = 0f;
-        while (time < shrinkTime)
-        {
-            time += Time.deltaTime;
-            transform.localScale = Vector3.Lerp(top, Vector3.zero, Mathf.Clamp01(time / shrinkTime));
-            yield return null;
-        }
-
         Destroy(ScaleTarget.gameObject);
     }
 }
