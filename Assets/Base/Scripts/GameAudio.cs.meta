@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: a68f90a1b2c34536f47a8197d8e9f0a1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - backMusic: {fileID: 8300000, guid: 25b98d313208abd4aaf245470ba102a9, type: 3}
+  - holdSound: {fileID: 8300000, guid: f5be33b01d58c2045ae26acf5502b93c, type: 3}
+  - shootSound: {fileID: 8300000, guid: 8bff27890a066ea4a9c3983b0731264f, type: 3}
+  - popSound: {fileID: 8300000, guid: aaf09d6140fdc7b49baf1a687553c873, type: 3}
+  - winSound: {fileID: 8300000, guid: c28aa7d6471284b47998d530bc288c6e, type: 3}
+  - lostSound: {fileID: 8300000, guid: ffbebdcfb9648dd428664da6979ab5fc, type: 3}
+  - jumpSound: {fileID: 8300000, guid: 521df11cf988040458d908fe8fba456a, type: 3}
+  - pathClearedSound: {fileID: 8300000, guid: 1479391132aa8644db0fb67b97d4e4cd, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
